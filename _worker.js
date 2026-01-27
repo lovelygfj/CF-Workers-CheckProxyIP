@@ -1437,6 +1437,37 @@ curl "https://cf.090227.xyz/check?proxyip=1.2.3.4:443"
         processed = processed.split(' ')[0];
       }
       
+      // 提取域名/IP:端口（自动处理URL）
+      // 检查是否是URL格式（包含://或者以//开头）
+      if (processed.includes('://') || processed.startsWith('//')) {
+        try {
+          // 如果是相对路径，添加默认协议
+          let urlStr = processed;
+          if (processed.startsWith('//')) {
+            urlStr = 'https:' + processed;
+          }
+          
+          const url = new URL(urlStr);
+          // 提取hostname（包含端口）和port
+          let result = url.hostname;
+          if (url.port) {
+            result = result + ':' + url.port;
+          }
+          processed = result;
+        } catch (e) {
+          console.log('URL解析失败，尝试正则提取:', e);
+          // 如果URL解析失败，尝试使用正则表达式提取
+          // 移除协议部分
+          let noProtocol = processed.replace(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//, '');
+          // 移除路径、查询参数和片段部分
+          noProtocol = noProtocol.split(/[/?#]/)[0];
+          processed = noProtocol;
+        }
+      } else if (processed.endsWith('/')) {
+        // 如果末尾有斜杠，去掉它
+        processed = processed.slice(0, -1);
+      }
+      
       return processed;
     }
     
