@@ -183,10 +183,10 @@ async function resolveDomain(domain) {
   domain = domain.split(':')[0]; // 移除端口
   try {
     const [ipv4Data, ipv6Data] = await Promise.all([
-      fetch(`https://1.1.1.1/dns-query?name=${domain}&type=A`, {
+      fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=A`, {
         headers: { 'Accept': 'application/dns-json' }
       }).then(r => r.json()),
-      fetch(`https://1.1.1.1/dns-query?name=${domain}&type=AAAA`, {
+      fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=AAAA`, {
         headers: { 'Accept': 'application/dns-json' }
       }).then(r => r.json())
     ]);
